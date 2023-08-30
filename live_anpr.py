@@ -3,22 +3,19 @@ import numpy as np
 import imutils
 import easyocr
 
-cap = cv2.VideoCapture('video1.mp4')
+cap = cv2.VideoCapture(0)  # 0 - default camera
 
 reader = easyocr.Reader(['en'])
 
-detected_texts = []
-while cap.isOpened():
+while True:
     ret, frame = cap.read()
     if not ret:
         break
-    
-    resized_frame = imutils.resize(frame, width=800)
-    
-    gray = cv2.cvtColor(resized_frame, cv2.COLOR_BGR2GRAY)
+
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     bfilter = cv2.bilateralFilter(gray, 11, 17, 17)
     edged = cv2.Canny(bfilter, 30, 200)
-    
+
     keypoints = cv2.findContours(edged.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     contours = imutils.grab_contours(keypoints)
     contours = sorted(contours, key=cv2.contourArea, reverse=True)[:10]
@@ -33,7 +30,7 @@ while cap.isOpened():
     if location is not None:
         mask = np.zeros(gray.shape, np.uint8)
         new_img = cv2.drawContours(mask, [location], 0, 255, -1)
-        new_img = cv2.bitwise_and(resized_frame, resized_frame, mask=mask)
+        new_img = cv2.bitwise_and(frame, frame, mask=mask)
 
         (x, y) = np.where(mask == 255)
         (x1, y1) = (np.min(x), np.min(y))
@@ -43,18 +40,13 @@ while cap.isOpened():
         result = reader.readtext(cropped_img)
         if result:
             text = result[0][-2]
-            detected_texts.append(text)
-            
-            font = cv2.FONT_HERSHEY_SIMPLEX
-            cv2.putText(resized_frame, text=text, org=(location[0][0][0], location[1][0][1] + 60), fontFace=font, fontScale=1, color=(0, 255, 0), thickness=2, lineType=cv2.LINE_AA)
-            cv2.rectangle(resized_frame, tuple(location[0][0]), tuple(location[2][0]), (0, 255, 0), 3)
+            cv2.putText(frame, text, org=(location[0][0][0], location[1][0][1] + 30),
+                        fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=1, color=(0, 255, 0), thickness=2)
+            cv2.rectangle(frame, tuple(location[0][0]), tuple(location[2][0]), (0, 255, 0), 3)
 
-    cv2.imshow('Number Plate Detection', resized_frame)
-    
+    cv2.imshow("NPRS - Real Time", frame)
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
-    for i, text in enumerate(detected_texts):
-        print(f"Frame {i+1}: {text}")
 
 cap.release()
 cv2.destroyAllWindows()
