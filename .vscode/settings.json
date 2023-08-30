@@ -1,0 +1,15 @@
+{
+    "cSpell.words": [
+        "bfilter",
+        "easyocr",
+        "figsize",
+        "imread",
+        "imshow",
+        "imutils",
+        "keypoints",
+        "matplotlib",
+        "pyplot",
+        "readtext"
+    ],
+    "editor.acceptSuggestionOnEnter": "on"
+}
