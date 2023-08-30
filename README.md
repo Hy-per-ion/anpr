@@ -12,8 +12,6 @@ NPRS is a cutting-edge software application designed to recognize and extract li
 
 - 🎯 **Accuracy and Robustness:** Utilizes advanced deep learning to ensure high accuracy across lighting conditions, angles, and plate types.
 
-- 🛠 **Easy Integration:** User-friendly interface and well-documented APIs allow seamless integration into existing projects.
-
 ## How It Works 🤖
 
 NPRS employs a seamless process for license plate recognition:
